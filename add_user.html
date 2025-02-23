@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add User</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Add User</h1>
+    <form id="addUserForm">
+        <label for="firstName">First Name:</label><br>
+        <input type="text" id="firstName" name="firstName" required><br><br>
+
+        <label for="lastName">Last Name:</label><br>
+        <input type="text" id="lastName" name="lastName" required><br><br>
+
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit">Add User</button>
+    </form>
+
+    <div id="response"></div>
+
+    <script>
+        const form = document.getElementById('addUserForm');
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const formData = {
+                username: document.getElementById('username').value,
+                first_name: document.getElementById('firstName').value,
+                last_name: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+
+            fetch('/users/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {throw new Error(err.detail || "Error adding user")});
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("User created:", data);
+                document.getElementById("response").innerHTML = "<p style='color:green;'>User added successfully!</p>";
+                form.reset();
+            })
+            .catch(error => {
+                console.error("Error adding user:", error);
+                document.getElementById("response").innerHTML = "<p style='color:red;'>"+ error.message +"</p>";
+            });
+        });
+
+    </script>
+</body>
+</html>
